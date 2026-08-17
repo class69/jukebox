@@ -2,10 +2,17 @@
 .DS_Store
 Thumbs.db
 .vscode/
+desktop.ini
 
-# Node / tooling
+# Node and tooling
 node_modules/
 npm-debug.log
+yarn-error.log
+
+# PHP and Composer
+vendor/
+composer.lock
+*.log
 
 # Large media (do not commit large audio files)
 assets/audio/
@@ -15,3 +22,10 @@ assets/audio/
 # Backups and zips
 backup/
 *.zip
+
+# Temporary and cache
+*.tmp
+*.cache
+.cache/
+tmp/
+*.swp
