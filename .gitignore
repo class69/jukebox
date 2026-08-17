@@ -1,0 +1,17 @@
+# OS and editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Node / tooling
+node_modules/
+npm-debug.log
+
+# Large media (do not commit large audio files)
+assets/audio/
+*.mp3
+*.wav
+
+# Backups and zips
+backup/
+*.zip
