@@ -1,0 +1,99 @@
+https://github.com/class69/jukebox
+cd "https://github.com/class69/jukebox"
+===================
+ssh-keygen -t ed25519 -C "redmond_k@hotmail.com"
+
+==============
+$ git branch -M main
+$ git add .
+$ git commit -m "Initial commit: stable jukebox baseline"
+===================
+$ git remote add origin https://github.com/class69/jukebox
+$ git push -u origin main
+
+git config --global user.name "class69"
+git config --global user.email "redmond_k@hotmail.com"
+========================================
+cd "C:\jukebox"
+===========================================
+# change to your project folder
+cd "https://smhs69/"
+
+# initialize git repo
+git init
+
+# set your identity (do this once)
+git config user.name "class69"
+git config user.email "redmond_k@hotmail.com"
+
+# create a sensible .gitignore
+cat > .gitignore <<'EOF'
+# Node / tooling
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.suo
+*.user
+*.log
+
+# Build / temp
+dist/
+build/
+tmp/
+*.tmp
+
+# Audio and large media (do not commit large audio files)
+assets/audio/
+*.mp3
+*.wav
+
+# Backups
+backup/
+*.zip
+EOF
+
+# stage everything (review first if you prefer)
+git add .
+
+# commit
+git commit -m "Initial commit: stable jukebox baseline"
+
+
+
+
+
+
+========================================
+
+Daily workflow: stage, commit, branch, tag
+# see status
+git status
+
+# stage changes
+git add .
+
+# commit with a clear message
+git commit -m "Daily snapshot: fixed tap sync and export"
+
+# create a feature branch
+git checkout -b feature/undo-last-tap
+
+# switch back to main
+git checkout main
+
+# merge a finished branch
+git merge feature/undo-last-tap
+
+# create an annotated tag for a release
+git tag -a v1.0-jukebox -m "Stable jukebox with tap sync and export"
+
+# show recent history
+git log --oneline --graph --decorate -n 20
+

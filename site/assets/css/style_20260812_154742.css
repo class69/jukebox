@@ -1,0 +1,315 @@
+// File: lyrics-final.js
+// Simplified lyrics handler with two improvements:
+// 1) Line tap-sync (mark per-line timestamps while playing)
+// 2) Click-to-seek (click a line to jump audio to that line)
+// No per-word karaoke; line-only highlighting and robust auto-scroll.
+
+/* ---------------- GLOBALS ---------------- */
+let currentLyrics=[];
+let _lastActiveLineIndex=-1;
+let _userScrolledAt=0;
+const USER_SCROLL_PAUSE_MS=3000; // pause auto-scroll for 3s after user scroll
+
+// Tap-sync state (line-level)
+let lineTapSyncActive=false;
+let lineTapIndex=0;
+
+/* ---------------- PARSE TIMESTAMP ---------------- */
+function parseTimestamp(ts) {
+  const match=ts && ts.match(/^ \[(\d {
+        1, 2
+
+      }):(\d {
+        2
+
+      })(?:\.(\d {
+          1, 3
+        }))?\] $/);
+  if ( !match) return NaN;
+  const minutes=parseInt(match[1], 10);
+  const seconds=parseInt(match[2], 10);
+  const fraction=match[3] ? parseFloat("0." + match[3]) : 0;
+  return minutes * 60+seconds+fraction;
+}
+
+/* ---------------- LOAD LYRICS FILE ---------------- */
+async function loadLyricsFile(path) {
+  try {
+    const res=await fetch(path);
+    const text=await res.text();
+
+    const rawLines=text .split(/\r?\n/) .map(l=> l.trim()) .filter(l=> l.length > 0);
+
+    const timestampRegexGlobal=/ \[(\d {
+        1, 2
+
+      }):(\d {
+        2
+
+      })(?:\.(\d {
+          1, 3
+        }))?\] /g;
+    const lyrics=[];
+    let lastTime=0;
+
+    for (let i=0; i < rawLines.length; i++) {
+      const raw=rawLines[i];
+      const tsMatches=raw.match(timestampRegexGlobal);
+      let seconds;
+
+      if (tsMatches && tsMatches.length) {
+        seconds=parseTimestamp(tsMatches[tsMatches.length - 1]);
+        if (Number.isNaN(seconds)) seconds=lastTime+0.001;
+      }
+
+      else {
+        // tiny increment so lines without timestamps don't all collapse to 0
+        seconds=lastTime+0.001;
+      }
+
+      let textPart=raw.replace(timestampRegexGlobal, "").trim();
+      textPart=textPart.replace(/^<|>$/g, "").trim();
+
+      lyrics.push({
+        text: textPart, seconds
+      });
+    lastTime=seconds;
+  }
+
+  // Defensive sort and ensure numeric seconds
+  return lyrics .map(l=> ({
+      text: l.text, seconds: Number.isFinite(l.seconds) ? l.seconds : 0
+    })) .sort((a, b)=> a.seconds - b.seconds);
+}
+
+catch (err) {
+  console.error("Failed to load lyrics:", err);
+  return [];
+}
+}
+
+/* ---------------- HELPERS: resolve scroll container ---------------- */
+function resolveScrollContainer(container) {
+  if ( !container) return null;
+  if (container.classList && container.classList.contains('lyrics-scroll')) return container;
+  const found=container.querySelector && container.querySelector('.lyrics-scroll');
+  return found || container;
+}
+
+/* ---------------- RENDER LYRICS (line-only) ---------------- */
+function renderLyrics(lyrics, container) {
+  if ( !container) return;
+  const scrollContainer=resolveScrollContainer(container);
+  if ( !scrollContainer) return;
+
+  scrollContainer.innerHTML="";
+  scrollContainer.scrollTop=0;
+  _lastActiveLineIndex=-1;
+
+  lyrics.forEach((line, i)=> {
+      const lineDiv=document.createElement("div");
+      lineDiv.dataset.line=i;
+      lineDiv.className="lyrics-line";
+      lineDiv.textContent=line.text || "";
+
+      // attach click-to-seek handler
+      lineDiv.addEventListener('click', (ev)=> {
+          // find audio element(s) on the page
+          const audio=document.querySelector('audio');
+          if ( !audio) return;
+          const secs=Number.isFinite(currentLyrics[i].seconds) ? currentLyrics[i].seconds : 0;
+          audio.currentTime=secs;
+          // if paused, keep paused; if playing, continue playing at new time
+        });
+      scrollContainer.appendChild(lineDiv);
+    });
+}
+
+/* ---------------- USER SCROLL LISTENERS (one-time) ---------------- */
+function initLyricsScrollUserListeners() {
+  if (initLyricsScrollUserListeners._inited) return;
+  initLyricsScrollUserListeners._inited=true;
+
+  const el=document.querySelector('.lyrics-scroll');
+  if ( !el) return;
+
+  const mark=()=> {
+    _userScrolledAt=Date.now();
+  }
+
+  ;
+
+  el.addEventListener('wheel', mark, {
+    passive: true
+  });
+
+el.addEventListener('touchstart', mark, {
+  passive: true
+});
+
+el.addEventListener('scroll', mark, {
+  passive: true
+});
+}
+
+/* ---------------- AUTO SCROLL (line-centered) ---------------- */
+function autoScrollLyrics(currentPlaybackTime, lyrics, container) {
+  if ( !container || !lyrics || !lyrics.length) return;
+
+  const scrollContainer=resolveScrollContainer(container);
+  if ( !scrollContainer) return;
+
+  // Do not auto-scroll before the first lyric timestamp is reached.
+  const firstTime=Number.isFinite(lyrics[0].seconds) ? lyrics[0].seconds: 0;
+  if (typeof currentPlaybackTime !=="number" || Number.isNaN(currentPlaybackTime)) return;
+  if (currentPlaybackTime < Math.max(0.05, firstTime - 0.01)) return;
+
+  // Find active line index
+  let activeIndex=-1;
+
+  for (let i=0; i < lyrics.length; i++) {
+    if (currentPlaybackTime >=lyrics[i].seconds) activeIndex=i;
+    else break;
+  }
+
+  if (activeIndex===-1) return;
+
+  // Respect recent user scroll
+  if (Date.now() - _userScrolledAt < USER_SCROLL_PAUSE_MS) {
+    _lastActiveLineIndex=activeIndex;
+    highlightActiveLine(activeIndex, scrollContainer);
+    return;
+  }
+
+  // Only scroll when the active line changes
+  if (activeIndex===_lastActiveLineIndex) {
+    highlightActiveLine(activeIndex, scrollContainer);
+    return;
+  }
+
+  const lineElement=scrollContainer.querySelector(`[data-line="${activeIndex}"]`);
+
+  if ( !lineElement) {
+    _lastActiveLineIndex=activeIndex;
+    return;
+  }
+
+  // Compute offset relative to the scroll container using bounding rects
+  const containerRect=scrollContainer.getBoundingClientRect();
+  const lineRect=lineElement.getBoundingClientRect();
+  const relativeTop=lineRect.top - containerRect.top+scrollContainer.scrollTop;
+
+  // Center the line
+  let offset=relativeTop - (scrollContainer.clientHeight / 2)+(lineElement.clientHeight / 2);
+
+  // Clamp offset
+  const maxScrollTop=Math.max(0, scrollContainer.scrollHeight - scrollContainer.clientHeight);
+  if (offset < 0) offset=0;
+  if (offset > maxScrollTop) offset=maxScrollTop;
+
+  scrollContainer.scrollTo({
+    top: offset, behavior: "smooth"
+  });
+
+_lastActiveLineIndex=activeIndex;
+highlightActiveLine(activeIndex, scrollContainer);
+}
+
+/* ---------------- HIGHLIGHT ACTIVE LINE ---------------- */
+function highlightActiveLine(activeIndex, scrollContainer) {
+  if ( !scrollContainer) return;
+
+  scrollContainer.querySelectorAll('[data-line]').forEach(el=> {
+      const idx=parseInt(el.dataset.line, 10);
+      el.classList.toggle('active-line', idx===activeIndex);
+    });
+}
+
+/* ---------------- UPDATE UI (timeupdate handler) ---------------- */
+function updateLyricsUIForJukebox(audio, container) {
+  if ( !currentLyrics || !currentLyrics.length) return;
+  const t=audio.currentTime;
+  autoScrollLyrics(t, currentLyrics, container);
+}
+
+/* ---------------- LINE TAP-SYNC API ---------------- */
+
+/**
+ * Start line tap-sync mode.
+ * After calling this, call jukeboxRegisterLineTap(audioElement) each time you want
+ * to mark the next line's timestamp (e.g., press a UI button while the song plays).
+ */
+function jukeboxStartLineTapSync() {
+  if ( !currentLyrics || !currentLyrics.length) return;
+  lineTapSyncActive=true;
+  lineTapIndex=0;
+  // Visual cue: add a class to the scroll container
+  const sc=document.querySelector('.lyrics-scroll');
+  if (sc) sc.classList.add('line-tap-sync-active');
+}
+
+/**
+ * Register the current audio time for the next line in sequence.
+ * Pass the audio element (or call with the page audio element).
+ * This sets currentLyrics[lineTapIndex].seconds = audio.currentTime and advances the index.
+ */
+function jukeboxRegisterLineTap(audioElement) {
+  if ( !lineTapSyncActive) return;
+  if ( !audioElement) audioElement=document.querySelector('audio');
+  if ( !audioElement) return;
+
+  if (lineTapIndex >=currentLyrics.length) {
+    // finished
+    jukeboxStopLineTapSync();
+    return;
+  }
+
+  const t=Math.round(audioElement.currentTime * 1000) / 1000;
+  currentLyrics[lineTapIndex].seconds=t;
+  lineTapIndex++;
+
+  // If we've set all lines, stop
+  if (lineTapIndex >=currentLyrics.length) jukeboxStopLineTapSync();
+}
+
+/**
+ * Stop line tap-sync mode and re-sort lyrics by their new timestamps.
+ */
+function jukeboxStopLineTapSync() {
+  lineTapSyncActive=false;
+  const sc=document.querySelector('.lyrics-scroll');
+  if (sc) sc.classList.remove('line-tap-sync-active');
+
+  // Re-sort lyrics by seconds and re-render to ensure order and data-line attributes match
+  currentLyrics.sort((a, b)=> a.seconds - b.seconds);
+  const container=document.querySelector('.lyrics-scroll') || document.querySelector('.lyrics-glass') || document.querySelector('.jukebox-lyrics-window');
+  if (container) renderLyrics(currentLyrics, container);
+}
+
+/* ---------------- MAIN LOAD FUNCTION ---------------- */
+async function jukeboxLoadLyrics(lyricsPath, audioElement, containerElement) {
+  initLyricsScrollUserListeners();
+
+  currentLyrics=await loadLyricsFile(lyricsPath);
+  renderLyrics(currentLyrics, containerElement);
+
+  // Remove previous handler if present
+  if (audioElement._lyricsTimeUpdateHandler) {
+    audioElement.removeEventListener("timeupdate", audioElement._lyricsTimeUpdateHandler);
+    audioElement._lyricsTimeUpdateHandler=null;
+  }
+
+  // Create and store a named handler so we can remove it later
+  audioElement._lyricsTimeUpdateHandler=function () {
+    updateLyricsUIForJukebox(audioElement, containerElement);
+  }
+
+  ;
+
+  audioElement.addEventListener("timeupdate", audioElement._lyricsTimeUpdateHandler);
+}
+
+/* ---------------- AUTO INIT ---------------- */
+document.addEventListener('DOMContentLoaded', ()=> {
+    initLyricsScrollUserListeners();
+  });

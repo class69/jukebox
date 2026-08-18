@@ -1,0 +1,63 @@
+[11-Jul-2026 20:07:29 UTC] PHP Parse error:  syntax error, unexpected double-quote mark, expecting "," or ";" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 33
+[11-Jul-2026 20:07:33 UTC] PHP Parse error:  syntax error, unexpected double-quote mark, expecting "," or ";" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 33
+[11-Jul-2026 20:18:46 UTC] PHP Parse error:  syntax error, unexpected token "endforeach", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 47
+[11-Jul-2026 20:19:46 UTC] PHP Parse error:  syntax error, unexpected token "endforeach", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 47
+[11-Jul-2026 20:19:48 UTC] PHP Parse error:  syntax error, unexpected token "endforeach", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 47
+[11-Jul-2026 20:21:18 UTC] PHP Parse error:  syntax error, unexpected token "endforeach", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 47
+[11-Jul-2026 22:24:39 UTC] PHP Parse error:  syntax error, unexpected variable "$stmt" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 6
+[11-Jul-2026 22:25:30 UTC] PHP Parse error:  syntax error, unexpected variable "$stmt" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 6
+[11-Jul-2026 22:25:59 UTC] PHP Parse error:  syntax error, unexpected variable "$stmt" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 6
+[11-Jul-2026 22:26:01 UTC] PHP Parse error:  syntax error, unexpected variable "$stmt" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 6
+[11-Jul-2026 22:26:46 UTC] PHP Parse error:  syntax error, unexpected variable "$stmt" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 6
+[11-Jul-2026 22:26:47 UTC] PHP Parse error:  syntax error, unexpected variable "$stmt" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 6
+[11-Jul-2026 22:32:09 UTC] PHP Parse error:  syntax error, unexpected variable "$stmt" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 6
+[11-Jul-2026 23:44:55 UTC] PHP Parse error:  syntax error, unexpected double-quote mark, expecting "," or ";" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 39
+[11-Jul-2026 23:45:19 UTC] PHP Parse error:  syntax error, unexpected double-quote mark, expecting "," or ";" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 39
+[11-Jul-2026 23:45:21 UTC] PHP Parse error:  syntax error, unexpected double-quote mark, expecting "," or ";" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 39
+[11-Jul-2026 23:45:48 UTC] PHP Parse error:  syntax error, unexpected token "?" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 39
+[12-Jul-2026 00:09:19 UTC] PHP Warning:  Undefined variable $previousSong in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 3
+[12-Jul-2026 00:09:19 UTC] PHP Warning:  Undefined variable $nextSong in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 15
+[12-Jul-2026 00:09:25 UTC] PHP Warning:  Undefined variable $previousSong in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 3
+[12-Jul-2026 00:09:25 UTC] PHP Warning:  Undefined variable $nextSong in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 15
+[12-Jul-2026 00:09:45 UTC] PHP Warning:  Undefined variable $previousSong in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 3
+[12-Jul-2026 00:09:45 UTC] PHP Warning:  Undefined variable $nextSong in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 15
+[12-Jul-2026 00:13:57 UTC] PHP Warning:  Undefined variable $previousSong in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 3
+[12-Jul-2026 00:13:57 UTC] PHP Warning:  Undefined variable $nextSong in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 15
+[12-Jul-2026 00:14:02 UTC] PHP Warning:  Undefined variable $previousSong in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 3
+[12-Jul-2026 00:14:02 UTC] PHP Warning:  Undefined variable $nextSong in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 15
+[12-Jul-2026 00:14:28 UTC] PHP Warning:  Undefined variable $previousSong in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 3
+[12-Jul-2026 00:14:28 UTC] PHP Warning:  Undefined variable $nextSong in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 15
+[13-Jul-2026 20:31:35 UTC] PHP Parse error:  syntax error, unexpected identifier "Song", expecting "," or ";" in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 112
+[13-Jul-2026 20:31:38 UTC] PHP Parse error:  syntax error, unexpected identifier "Song", expecting "," or ";" in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 112
+[13-Jul-2026 20:33:38 UTC] PHP Parse error:  syntax error, unexpected identifier "Song", expecting "," or ";" in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 113
+[13-Jul-2026 20:33:52 UTC] PHP Parse error:  syntax error, unexpected identifier "Song", expecting "," or ";" in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 113
+[13-Jul-2026 20:42:18 UTC] PHP Warning:  Trying to access array offset on false in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 117
+[13-Jul-2026 20:42:18 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 117
+[13-Jul-2026 21:23:14 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 4
+[13-Jul-2026 21:23:16 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/song.php on line 4
+[13-Jul-2026 22:15:06 UTC] PHP Parse error:  syntax error, unexpected end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 198
+[13-Jul-2026 22:17:36 UTC] PHP Parse error:  syntax error, unexpected end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 196
+[13-Jul-2026 22:17:37 UTC] PHP Parse error:  syntax error, unexpected end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 196
+[13-Jul-2026 22:18:02 UTC] PHP Warning:  Undefined variable $currentLetter in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 115
+[13-Jul-2026 22:19:26 UTC] PHP Warning:  Undefined variable $currentLetter in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 115
+[13-Jul-2026 23:09:53 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 107
+[13-Jul-2026 23:10:12 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 107
+[13-Jul-2026 23:10:15 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 107
+[13-Jul-2026 23:10:48 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 107
+[13-Jul-2026 23:10:49 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 107
+[13-Jul-2026 23:10:50 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 107
+[13-Jul-2026 23:11:51 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 107
+[13-Jul-2026 23:25:33 UTC] PHP Parse error:  syntax error, unexpected token "<" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 113
+[13-Jul-2026 23:25:35 UTC] PHP Parse error:  syntax error, unexpected token "<" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 113
+[13-Jul-2026 23:26:04 UTC] PHP Parse error:  syntax error, unexpected token "<" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 113
+[13-Jul-2026 23:26:06 UTC] PHP Parse error:  syntax error, unexpected token "<" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 113
+[13-Jul-2026 23:38:33 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 108
+[13-Jul-2026 23:38:35 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 108
+[13-Jul-2026 23:39:08 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 109
+[13-Jul-2026 23:39:10 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 109
+[13-Jul-2026 23:39:52 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 110
+[13-Jul-2026 23:39:53 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 110
+[13-Jul-2026 23:39:53 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 110
+[13-Jul-2026 23:39:54 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 110
+[13-Jul-2026 23:39:54 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 110
+[14-Jul-2026 01:04:32 UTC] PHP Parse error:  syntax error, unexpected double-quote mark, expecting "," or ";" in /home/wwmarke/public_html/kennethredmond.com/69/index.php on line 137

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Class of 69 – Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <style>
+    /* Admin Panel Layout Improvements */
+    .admin-layout {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    .admin-section {
+      background: #f7f3e9;
+      border: 2px solid #c7b89a;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+
+    .admin-section h2 {
+      margin-top: 0;
+      color: #4a3b2a;
+      border-bottom: 2px solid #c7b89a;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+      color: #3a2d20;
+    }
+
+    input[type="file"],
+    select,
+    textarea {
+      width: 100%;
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      border: 1px solid #b8a88f;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .admin-btn {
+      margin-top: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      background: #4a3b2a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .admin-btn:hover {
+      background: #6a543d;
+    }
+
+    #uploadStatus,
+    #rebuildStatus,
+    #lyricsStatus {
+      margin-top: 1rem;
+      font-style: italic;
+      color: #4a3b2a;
+    }
+  </style>
+</head>
+
+<body class="theme-blues">
+  <header class="site-header">
+    <h1>Admin Panel – Class of 69 Delta Blues Jukebox</h1>
+    <p>Upload songs, lyrics, artwork, and videos</p>
+  </header>
+
+  <main class="admin-layout">
+
+    <!-- Upload Section -->
+    <section class="admin-section">
+      <h2>Upload New Song</h2>
+
+      <form id="uploadForm">
+        <label>MP3 File</label>
+        <input type="file" name="mp3" accept=".mp3" required>
+
+        <label>Lyrics File (TXT)</label>
+        <input type="file" name="lyrics" accept=".txt" required>
+
+        <label>Video File (Optional)</label>
+        <input type="file" name="video" accept=".mp4">
+
+        <label>Vinyl Label Artwork (PNG/JPG)</label>
+        <input type="file" name="vinylLabel" accept=".png,.jpg,.jpeg">
+
+        <label>Album Cover Artwork (PNG/JPG)</label>
+        <input type="file" name="albumCover" accept=".png,.jpg,.jpeg">
+
+        <button type="submit" class="admin-btn">Upload Files</button>
+      </form>
+
+      <div id="uploadStatus"></div>
+    </section>
+
+    <!-- Rebuild Section -->
+    <section class="admin-section">
+      <h2>Rebuild songs.json</h2>
+      <p>This scans the /songs, /videos, and /artwork folders and regenerates songs.json automatically.</p>
+      <button id="rebuildBtn" class="admin-btn">Rebuild Library</button>
+      <div id="rebuildStatus"></div>
+    </section>
+
+    <!-- Lyrics Manager -->
+    <section class="admin-section">
+      <h2>Lyrics Manager</h2>
+      <p>Edit lyrics, add timestamps, and preview synced lyrics.</p>
+
+      <label>Select Song</label>
+      <select id="lyricsSelect"></select>
+
+      <label>Edit Lyrics</label>
+      <textarea id="lyricsEditor" rows="12"></textarea>
+
+      <button id="saveLyricsBtn" class="admin-btn">Save Lyrics</button>
+      <button id="timestampBtn" class="admin-btn">Auto‑Timestamp</button>
+
+      <div id="lyricsStatus"></div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; Class of 69 – Admin Panel</p>
+  </footer>
+
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>
