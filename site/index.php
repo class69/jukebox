@@ -35,6 +35,8 @@
 
       <!-- Tap sync controls will be injected here by jukebox.js -->
       <div id="lyricsControls" class="lyrics-controls"></div>
+      <div class="tap-status" id="tap-status">Tap registered at <span id="tap-time">0.000s</span> <a id="undo-inline" style="display:none; margin-left:8px; font-size:0.9em; cursor:pointer;">Undo</a></div>
+
     </section>
   </main>
 
