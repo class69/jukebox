@@ -44,6 +44,12 @@ body {
   box-sizing: border-box;
 }
 
+/* Visual cue while Tap Sync is active (applies at all sizes) */
+.jukebox-lyrics-window.line-tap-sync-active {
+  outline: 2px dashed #ffd166;
+  box-shadow: 0 0 0 4px rgba(255, 209, 102, 0.04) inset;
+}
+
 .lyrics-glass {
   height: 220px;
   overflow: hidden;
@@ -101,10 +107,20 @@ body {
   font-weight: 700;
 }
 
+/* Consolidated tap-status and inline undo link */
 .tap-status {
   color: #cfcfcf;
-  font-size: 0.9rem;
-  margin-left: 8px;
+  font-size: 0.92rem;
+  margin-left: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tap-status a#undo-inline {
+  color: #007acc;
+  text-decoration: underline;
+  font-weight: 500;
 }
 
 /* Responsive */
@@ -116,17 +132,26 @@ body {
   .jukebox-lyrics-window {
     order: 3;
   }
-/* Visual cue while Tap Sync is active */
-.jukebox-lyrics-window.line-tap-sync-active {
-  outline: 2px dashed #ffd166;
-  box-shadow: 0 0 0 4px rgba(255, 209, 102, 0.04) inset;
-}
-/* UI tidy-ups */
-.site-main {
-  gap: 18px;
-  padding: 18px;
+
+  /* UI tidy-ups for small screens */
+  .site-main {
+    gap: 18px;
+    padding: 18px;
+  }
+
+  .lyrics-controls {
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .tap-btn {
+    min-width: 84px;
+    padding: 8px 12px;
+    font-weight: 600;
+  }
 }
 
+/* Library list styles */
 .library ul {
   margin: 0;
   padding: 0;
@@ -148,22 +173,4 @@ body {
 .now-playing audio {
   width: 100%;
   margin-top: 8px;
-}
-
-.lyrics-controls {
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.tap-btn {
-  min-width: 84px;
-  padding: 8px 12px;
-  font-weight: 600;
-}
-
-.tap-status {
-  color: #cfcfcf;
-  font-size: 0.92rem;
-  margin-left: 6px;
-}
 }
