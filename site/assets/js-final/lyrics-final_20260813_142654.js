@@ -7,6 +7,9 @@ let _lastActiveLineIndex = -1;
 let _userScrolledAt = 0;
 const USER_SCROLL_PAUSE_MS = 3000;
 
+console.log('lyrics-final loaded: local-build v20260819-undo');
+
+
 // Tap sync state
 let _lineTapSyncActive = false;
 let _lineTapIndex = 0;
