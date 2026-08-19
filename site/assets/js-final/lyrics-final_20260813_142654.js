@@ -9,14 +9,17 @@ const USER_SCROLL_PAUSE_MS = 3000;
 
 console.log('lyrics-final loaded: local-build v20260819-undo');
 
-
 // Tap sync state
 let _lineTapSyncActive = false;
 let _lineTapIndex = 0;
 
 /* ---------------- PARSE TIMESTAMP ---------------- */
 function parseTimestamp(ts) {
-    const m = ts && ts.match(/^\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]$/);
+    const m = ts && ts.match(/^
+
+    \[(\d{ 1, 2}): (\d{ 2}) (?: \.(\d{ 1, 3}))?\]
+
+    $ /);
     if (!m) return NaN;
     const min = parseInt(m[1], 10), sec = parseInt(m[2], 10), frac = m[3] ? parseFloat('0.' + m[3]) : 0;
     return min * 60 + sec + frac;
@@ -28,7 +31,11 @@ async function loadLyricsFile(path) {
         const res = await fetch(path);
         const text = await res.text();
         const rawLines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-        const rx = /\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]/g;
+        const rx = /
+
+        \[(\d{ 1, 2}): (\d{ 2}) (?: \.(\d{ 1, 3}))?\]
+
+            / g;
         const out = []; let last = 0;
         for (let raw of rawLines) {
             const matches = raw.match(rx);
@@ -152,7 +159,7 @@ function updateLyricsUIForJukebox(audio, container) {
     autoScrollLyrics(audio.currentTime, currentLyrics, container);
 }
 
-/* ---------------- TAP SYNC API (line-level) ---------------- */ 
+/* ---------------- TAP SYNC API (line-level) ---------------- */
 function jukeboxStartLineTapSync() {
     if (!currentLyrics || !currentLyrics.length) return;
     _lineTapSyncActive = true;
@@ -161,21 +168,10 @@ function jukeboxStartLineTapSync() {
     if (sc) {
         sc.classList.add('line-tap-sync-active');
         if (!sc.id) sc.id = 'line-' + Date.now();
-        recordTapForUndo({ domId: sc.id, className: 'line-tap-sync-active' });
+        // record for undo
+        recordTapForUndo({ domId: sc.id, className: 'line-tap-sync-active', time: Date.now() });
     }
-    *** Begin Patch
-        *** Update File: site / assets / js - final / lyrics - final_20260813_142654.js
-    @@
--    if (sc) sc.classList.add('line-tap-sync-active');
-    +    if (sc) {
-        +      sc.classList.add('line-tap-sync-active');
-        +      if (!sc.id) sc.id = 'line-' + Date.now();
-        +      recordTapForUndo({ domId: sc.id, className: 'line-tap-sync-active' });
-        +    }
-*** End Patch
-
-
-      
+}
 
 function jukeboxRegisterLineTap(audioElement) {
     if (!_lineTapSyncActive) return;
@@ -216,48 +212,85 @@ async function jukeboxLoadLyrics(lyricsPath, audioElement, containerElement) {
     audioElement._lyricsTimeUpdateHandler = function () { updateLyricsUIForJukebox(audioElement, containerElement); };
     audioElement.addEventListener('timeupdate', audioElement._lyricsTimeUpdateHandler);
 }
-    // --- Undo last tap helper ---
-    window.undoBuffer = { lastAction: null };
 
-    function recordTapForUndo(tapMeta) {
-        // tapMeta: { domId, className } or { domId, time }
-        window.undoBuffer.lastAction = tapMeta;
-        const btn = document.getElementById('undo-last-tap');
-        if (btn) btn.style.display = 'inline-block';
+/* ---------------- UNDO HELPER (single, consolidated) ---------------- */
+window.undoBuffer = window.undoBuffer || { lastAction: null };
+
+function recordTapForUndo(tapMeta) {
+    // tapMeta: { domId, className, time }
+    window.undoBuffer.lastAction = tapMeta;
+    const undoLink = document.getElementById('undo-inline');
+    const undoBtn = document.getElementById('undo-last-tap');
+    const tapTime = document.getElementById('tap-time');
+    if (tapTime && tapMeta.time) tapTime.textContent = (tapMeta.time / 1000).toFixed(3) + 's';
+    if (undoLink) undoLink.style.display = 'inline';
+    if (undoBtn) undoBtn.style.display = 'inline-block';
+}
+
+function undoLastTap() {
+    const action = window.undoBuffer.lastAction;
+    if (!action) return;
+
+    // If a class was recorded, remove that class from the element
+    if (action.domId && action.className) {
+        const el = document.getElementById(action.domId);
+        if (el && el.classList) el.classList.remove(action.className);
+    } else if (action.domId) {
+        // fallback: remove the element if that was the intent
+        const el = document.getElementById(action.domId);
+        if (el && el.parentNode) el.parentNode.removeChild(el);
+    } else {
+        // last-resort fallback: remove the last child of a known container
+        const container = document.querySelector('.line-container, .taps-container, #jukeboxLyrics');
+        if (container && container.lastElementChild) container.removeChild(container.lastElementChild);
     }
 
-    function undoLastTap() {
-        const action = window.undoBuffer.lastAction;
-        if (!action) return;
+    // Clear buffer and hide UI
+    window.undoBuffer.lastAction = null;
+    const undoLink = document.getElementById('undo-inline');
+    const undoBtn = document.getElementById('undo-last-tap');
+    const tapTime = document.getElementById('tap-time');
+    if (undoLink) undoLink.style.display = 'none';
+    if (undoBtn) undoBtn.style.display = 'none';
+    if (tapTime) tapTime.textContent = '';
 
-        // If a class was recorded, remove that class from the element
-        if (action.domId && action.className) {
-            const el = document.getElementById(action.domId);
-            if (el && el.classList) el.classList.remove(action.className);
-        } else if (action.domId) {
-            // fallback: remove the element if that was the intent
-            const el = document.getElementById(action.domId);
-            if (el && el.parentNode) el.parentNode.removeChild(el);
-        } else {
-            // last-resort fallback: remove the last child of a known container
-            const container = document.querySelector('.line-container, .taps-container, #jukeboxLyrics');
-            if (container && container.lastElementChild) container.removeChild(container.lastElementChild);
+    // Recalculate derived state if your app needs it
+    if (typeof recalcTapDerivedState === 'function') recalcTapDerivedState();
+}
+
+/* ---------------- DOM READY: wire undo UI and shortcuts once ---------------- */
+document.addEventListener('DOMContentLoaded', function () {
+    const undoLink = document.getElementById('undo-inline');
+    if (undoLink) undoLink.addEventListener('click', undoLastTap);
+
+    const undoBtn = document.getElementById('undo-last-tap');
+    if (undoBtn) undoBtn.addEventListener('click', undoLastTap);
+
+    document.addEventListener('keydown', function (e) {
+        // Ctrl/Cmd+Z
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+            e.preventDefault();
+            undoLastTap();
+            return;
         }
-
-        // Clear buffer and hide button
-        window.undoBuffer.lastAction = null;
-        const btn = document.getElementById('undo-last-tap');
-        if (btn) btn.style.display = 'none';
-
-        // Recalculate derived state if your app needs it
-        if (typeof recalcTapDerivedState === 'function') recalcTapDerivedState();
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const undoBtn = document.getElementById('undo-last-tap');
-        if (undoBtn) undoBtn.addEventListener('click', undoLastTap);
+        // single-key 'u'
+        if (!e.ctrlKey && !e.metaKey && !e.altKey && e.key.toLowerCase() === 'u') {
+            undoLastTap();
+        }
     });
 
+    // optional: long-press on Tap button for mobile undo
+    const tapBtn = document.querySelector('.tap-btn.tap');
+    if (tapBtn) {
+        let pressTimer = null;
+        tapBtn.addEventListener('touchstart', function () {
+            pressTimer = setTimeout(undoLastTap, 700);
+        });
+        tapBtn.addEventListener('touchend', function () {
+            if (pressTimer) clearTimeout(pressTimer);
+        });
+    }
+});
 
 /* ---------------- AUTO INIT ---------------- */
 document.addEventListener('DOMContentLoaded', () => { initLyricsScrollUserListeners(); });
