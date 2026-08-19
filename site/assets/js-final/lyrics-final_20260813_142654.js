@@ -1,296 +1,178 @@
-// Safe, non-destructive lyrics module with line-only highlighting, click-to-seek,
-// and simple line-level Tap Sync API (jukeboxStartLineTapSync, jukeboxRegisterLineTap, jukeboxStopLineTapSync).
-
-/* ---------------- GLOBALS ---------------- */
-let currentLyrics = [];
-let _lastActiveLineIndex = -1;
-let _userScrolledAt = 0;
-const USER_SCROLL_PAUSE_MS = 3000;
-
-console.log('lyrics-final loaded: local-build v20260819-undo');
-
-// Tap sync state
-let _lineTapSyncActive = false;
-let _lineTapIndex = 0;
-
-/* ---------------- PARSE TIMESTAMP ---------------- */
-function parseTimestamp(ts) {
-    const m = ts && ts.match(/^
-
-    \[(\d{ 1, 2}): (\d{ 2}) (?: \.(\d{ 1, 3}))?\]
-
-    $ /);
-    if (!m) return NaN;
-    const min = parseInt(m[1], 10), sec = parseInt(m[2], 10), frac = m[3] ? parseFloat('0.' + m[3]) : 0;
-    return min * 60 + sec + frac;
+cat > site / assets / css / style.css << 'CSS'
+/* Basic layout */
+body {
+    font - family: system - ui, -apple - system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    margin: 0;
+    color: #eee;
+    background: #111;
 }
 
-/* ---------------- LOAD LYRICS FILE ---------------- */
-async function loadLyricsFile(path) {
-    try {
-        const res = await fetch(path);
-        const text = await res.text();
-        const rawLines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-        const rx = /
+.site - header,
+.site - footer {
+    padding: 12px 16px;
+    background: #0f0f0f;
+    color: #fff;
+}
 
-        \[(\d{ 1, 2}): (\d{ 2}) (?: \.(\d{ 1, 3}))?\]
+.site - main {
+    display: grid;
+    grid - template - columns: 240px 1fr 360px;
+    gap: 16px;
+    padding: 16px;
+    box - sizing: border - box;
+}
 
-            / g;
-        const out = []; let last = 0;
-        for (let raw of rawLines) {
-            const matches = raw.match(rx);
-            let seconds = matches && matches.length ? parseTimestamp(matches[matches.length - 1]) : last + 0.001;
-            if (Number.isNaN(seconds)) seconds = last + 0.001;
-            let text = raw.replace(rx, '').trim().replace(/^<|>$/g, '').trim();
-            out.push({ text, seconds });
-            last = seconds;
-        }
-        return out.map(l => ({ text: l.text, seconds: Number.isFinite(l.seconds) ? l.seconds : 0 })).sort((a, b) => a.seconds - b.seconds);
-    } catch (e) {
-        console.error('lyrics-final.js: load failed', e);
-        return [];
+/* Library */
+.library {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 12px;
+    border - radius: 8px;
+}
+
+/* Now playing */
+.now - playing {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 12px;
+    border - radius: 8px;
+}
+
+/* Lyrics window wrapper */
+.jukebox - lyrics - window {
+    background: rgba(0, 0, 0, 0.45);
+    border: 2px solid #c9b89a;
+    border - radius: 10px;
+    padding: 12px;
+    box - sizing: border - box;
+}
+
+/* Visual cue while Tap Sync is active (applies at all sizes) */
+.jukebox - lyrics - window.line - tap - sync - active {
+    outline: 2px dashed #ffd166;
+    box - shadow: 0 0 0 4px rgba(255, 209, 102, 0.04) inset;
+}
+
+.lyrics - glass {
+    height: 220px;
+    overflow: hidden;
+    padding: 6px;
+    box - sizing: border - box;
+}
+
+.lyrics - scroll {
+    height: 220px;
+    overflow - y: auto;
+    padding - right: 8px;
+    box - sizing: border - box;
+    -webkit - overflow - scrolling: touch;
+}
+
+/* Lyrics lines */
+.lyrics - line {
+    padding: 6px 8px;
+    color: #ddd;
+    cursor: pointer;
+    border - radius: 6px;
+}
+
+.lyrics - line:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.lyrics - line.active - line {
+    background: rgba(244, 197, 66, 0.12);
+    color: #ffd166;
+    font - weight: 700;
+}
+
+/* Tap sync controls */
+.lyrics - controls {
+    margin - top: 10px;
+    display: flex;
+    gap: 8px;
+    align - items: center;
+}
+
+.tap - btn {
+    background: #222;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 8px 10px;
+    border - radius: 6px;
+    cursor: pointer;
+}
+
+.tap - btn.primary {
+    background: #ffd166;
+    color: #111;
+    border - color: #e6b84a;
+    font - weight: 700;
+}
+
+/* Consolidated tap-status and inline undo link */
+.tap - status {
+    color: #cfcfcf;
+    font - size: 0.92rem;
+    margin - left: 6px;
+    white - space: nowrap;
+    overflow: hidden;
+    text - overflow: ellipsis;
+}
+
+.tap - status a#undo - inline {
+    color: #007acc;
+    text - decoration: underline;
+    font - weight: 500;
+}
+
+/* Responsive */
+@media(max - width: 900px) {
+  .site - main {
+        grid - template - columns: 1fr;
+    }
+
+  .jukebox - lyrics - window {
+        order: 3;
+    }
+
+  /* UI tidy-ups for small screens */
+  .site - main {
+        gap: 18px;
+        padding: 18px;
+    }
+
+  .lyrics - controls {
+        gap: 10px;
+        margin - top: 12px;
+    }
+
+  .tap - btn {
+        min - width: 84px;
+        padding: 8px 12px;
+        font - weight: 600;
     }
 }
 
-/* ---------------- HELPERS ---------------- */
-function resolveScrollContainer(container) {
-    if (!container || container === document || container === document.body) {
-        const found = document.querySelector('.lyrics-scroll');
-        if (found) return found;
-        console.error('lyrics-final.js: .lyrics-scroll not found');
-        return null;
-    }
-    if (container.classList && container.classList.contains('lyrics-scroll')) return container;
-    try { const found = container.querySelector && container.querySelector('.lyrics-scroll'); if (found) return found; } catch (e) { }
-    console.error('lyrics-final.js: .lyrics-scroll not found inside provided container');
-    return null;
+/* Library list styles */
+.library ul {
+    margin: 0;
+    padding: 0;
+    list - style: none;
 }
 
-/* ---------------- RENDER ---------------- */
-function renderLyrics(lyrics, container) {
-    const sc = resolveScrollContainer(container);
-    if (!sc) return;
-    sc.innerHTML = '';
-    sc.scrollTop = 0;
-    _lastActiveLineIndex = -1;
-
-    lyrics.forEach((line, i) => {
-        const d = document.createElement('div');
-        d.dataset.line = i;
-        d.className = 'lyrics-line';
-        d.textContent = line.text || '';
-        // click-to-seek
-        d.addEventListener('click', () => {
-            const audio = document.querySelector('audio');
-            if (!audio) return;
-            const secs = Number.isFinite(currentLyrics[i].seconds) ? currentLyrics[i].seconds : 0;
-            audio.currentTime = secs;
-        });
-        sc.appendChild(d);
-    });
+.library li {
+    padding: 8px 10px;
+    border - radius: 6px;
+    margin - bottom: 6px;
+    background: rgba(255, 255, 255, 0.02);
+    cursor: pointer;
 }
 
-/* ---------------- USER SCROLL LISTENERS ---------------- */
-function initLyricsScrollUserListeners() {
-    if (initLyricsScrollUserListeners._inited) return;
-    initLyricsScrollUserListeners._inited = true;
-    const el = document.querySelector('.lyrics-scroll');
-    if (!el) return;
-    const mark = () => { _userScrolledAt = Date.now(); };
-    el.addEventListener('wheel', mark, { passive: true });
-    el.addEventListener('touchstart', mark, { passive: true });
-    el.addEventListener('scroll', mark, { passive: true });
+.library li:hover {
+    background: rgba(255, 255, 255, 0.03);
 }
 
-/* ---------------- AUTO SCROLL & HIGHLIGHT ---------------- */
-function highlightActiveLine(idx, sc) {
-    if (!sc) return;
-    sc.querySelectorAll('[data-line]').forEach(el => {
-        el.classList.toggle('active-line', parseInt(el.dataset.line, 10) === idx);
-    });
+.now - playing audio {
+    width: 100 %;
+    margin - top: 8px;
 }
-
-function autoScrollLyrics(time, lyrics, container) {
-    if (!container || !lyrics || !lyrics.length) return;
-    const sc = resolveScrollContainer(container);
-    if (!sc) return;
-
-    const firstTime = Number.isFinite(lyrics[0].seconds) ? lyrics[0].seconds : 0;
-    if (typeof time !== 'number' || Number.isNaN(time)) return;
-    if (time < Math.max(0.05, firstTime - 0.01)) return;
-
-    let active = -1;
-    for (let i = 0; i < lyrics.length; i++) {
-        if (time >= lyrics[i].seconds) active = i;
-        else break;
-    }
-    if (active === -1) return;
-
-    if (Date.now() - _userScrolledAt < USER_SCROLL_PAUSE_MS) {
-        _lastActiveLineIndex = active;
-        highlightActiveLine(active, sc);
-        return;
-    }
-
-    if (active === _lastActiveLineIndex) {
-        highlightActiveLine(active, sc);
-        return;
-    }
-
-    const el = sc.querySelector(`[data-line="${active}"]`);
-    if (!el) { _lastActiveLineIndex = active; return; }
-
-    const crect = sc.getBoundingClientRect();
-    const lrect = el.getBoundingClientRect();
-    const relativeTop = lrect.top - crect.top + sc.scrollTop;
-    let offset = relativeTop - (sc.clientHeight / 2) + (el.clientHeight / 2);
-    const max = Math.max(0, sc.scrollHeight - sc.clientHeight);
-    if (offset < 0) offset = 0; if (offset > max) offset = max;
-
-    try { sc.scrollTo({ top: offset, behavior: 'smooth' }); } catch (e) { sc.scrollTop = offset; }
-
-    _lastActiveLineIndex = active;
-    highlightActiveLine(active, sc);
-}
-
-/* ---------------- UPDATE UI ---------------- */
-function updateLyricsUIForJukebox(audio, container) {
-    if (!currentLyrics || !currentLyrics.length) return;
-    autoScrollLyrics(audio.currentTime, currentLyrics, container);
-}
-
-/* ---------------- TAP SYNC API (line-level) ---------------- */
-function jukeboxStartLineTapSync() {
-    if (!currentLyrics || !currentLyrics.length) return;
-    _lineTapSyncActive = true;
-    _lineTapIndex = 0;
-    const sc = document.querySelector('.lyrics-scroll');
-    if (sc) {
-        sc.classList.add('line-tap-sync-active');
-        if (!sc.id) sc.id = 'line-' + Date.now();
-        // record for undo
-        recordTapForUndo({ domId: sc.id, className: 'line-tap-sync-active', time: Date.now() });
-    }
-}
-
-function jukeboxRegisterLineTap(audioElement) {
-    if (!_lineTapSyncActive) return;
-    if (!audioElement) audioElement = document.querySelector('audio');
-    if (!audioElement) return;
-    if (_lineTapIndex >= currentLyrics.length) {
-        jukeboxStopLineTapSync();
-        return;
-    }
-    const t = Math.round(audioElement.currentTime * 1000) / 1000;
-    currentLyrics[_lineTapIndex].seconds = t;
-    _lineTapIndex++;
-    if (_lineTapIndex >= currentLyrics.length) jukeboxStopLineTapSync();
-}
-
-function jukeboxStopLineTapSync() {
-    _lineTapSyncActive = false;
-    const sc = document.querySelector('.lyrics-scroll');
-    if (sc) sc.classList.remove('line-tap-sync-active');
-    // Re-sort and re-render so data-line attributes match new order
-    currentLyrics.sort((a, b) => a.seconds - b.seconds);
-    const container = document.querySelector('.jukebox-lyrics-window') || document.querySelector('.lyrics-scroll');
-    if (container) renderLyrics(currentLyrics, container);
-}
-
-/* ---------------- MAIN LOAD FUNCTION ---------------- */
-async function jukeboxLoadLyrics(lyricsPath, audioElement, containerElement) {
-    initLyricsScrollUserListeners();
-    const sc = resolveScrollContainer(containerElement);
-    if (!sc) { console.error('jukeboxLoadLyrics aborted: invalid container'); return; }
-    currentLyrics = await loadLyricsFile(lyricsPath);
-    renderLyrics(currentLyrics, containerElement);
-    if (!audioElement) { console.error('jukeboxLoadLyrics aborted: no audio element'); return; }
-    if (audioElement._lyricsTimeUpdateHandler) {
-        audioElement.removeEventListener('timeupdate', audioElement._lyricsTimeUpdateHandler);
-        audioElement._lyricsTimeUpdateHandler = null;
-    }
-    audioElement._lyricsTimeUpdateHandler = function () { updateLyricsUIForJukebox(audioElement, containerElement); };
-    audioElement.addEventListener('timeupdate', audioElement._lyricsTimeUpdateHandler);
-}
-
-/* ---------------- UNDO HELPER (single, consolidated) ---------------- */
-window.undoBuffer = window.undoBuffer || { lastAction: null };
-
-function recordTapForUndo(tapMeta) {
-    // tapMeta: { domId, className, time }
-    window.undoBuffer.lastAction = tapMeta;
-    const undoLink = document.getElementById('undo-inline');
-    const undoBtn = document.getElementById('undo-last-tap');
-    const tapTime = document.getElementById('tap-time');
-    if (tapTime && tapMeta.time) tapTime.textContent = (tapMeta.time / 1000).toFixed(3) + 's';
-    if (undoLink) undoLink.style.display = 'inline';
-    if (undoBtn) undoBtn.style.display = 'inline-block';
-}
-
-function undoLastTap() {
-    const action = window.undoBuffer.lastAction;
-    if (!action) return;
-
-    // If a class was recorded, remove that class from the element
-    if (action.domId && action.className) {
-        const el = document.getElementById(action.domId);
-        if (el && el.classList) el.classList.remove(action.className);
-    } else if (action.domId) {
-        // fallback: remove the element if that was the intent
-        const el = document.getElementById(action.domId);
-        if (el && el.parentNode) el.parentNode.removeChild(el);
-    } else {
-        // last-resort fallback: remove the last child of a known container
-        const container = document.querySelector('.line-container, .taps-container, #jukeboxLyrics');
-        if (container && container.lastElementChild) container.removeChild(container.lastElementChild);
-    }
-
-    // Clear buffer and hide UI
-    window.undoBuffer.lastAction = null;
-    const undoLink = document.getElementById('undo-inline');
-    const undoBtn = document.getElementById('undo-last-tap');
-    const tapTime = document.getElementById('tap-time');
-    if (undoLink) undoLink.style.display = 'none';
-    if (undoBtn) undoBtn.style.display = 'none';
-    if (tapTime) tapTime.textContent = '';
-
-    // Recalculate derived state if your app needs it
-    if (typeof recalcTapDerivedState === 'function') recalcTapDerivedState();
-}
-
-/* ---------------- DOM READY: wire undo UI and shortcuts once ---------------- */
-document.addEventListener('DOMContentLoaded', function () {
-    const undoLink = document.getElementById('undo-inline');
-    if (undoLink) undoLink.addEventListener('click', undoLastTap);
-
-    const undoBtn = document.getElementById('undo-last-tap');
-    if (undoBtn) undoBtn.addEventListener('click', undoLastTap);
-
-    document.addEventListener('keydown', function (e) {
-        // Ctrl/Cmd+Z
-        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
-            e.preventDefault();
-            undoLastTap();
-            return;
-        }
-        // single-key 'u'
-        if (!e.ctrlKey && !e.metaKey && !e.altKey && e.key.toLowerCase() === 'u') {
-            undoLastTap();
-        }
-    });
-
-    // optional: long-press on Tap button for mobile undo
-    const tapBtn = document.querySelector('.tap-btn.tap');
-    if (tapBtn) {
-        let pressTimer = null;
-        tapBtn.addEventListener('touchstart', function () {
-            pressTimer = setTimeout(undoLastTap, 700);
-        });
-        tapBtn.addEventListener('touchend', function () {
-            if (pressTimer) clearTimeout(pressTimer);
-        });
-    }
-});
-
-/* ---------------- AUTO INIT ---------------- */
-document.addEventListener('DOMContentLoaded', () => { initLyricsScrollUserListeners(); });
+CSSS
