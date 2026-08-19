@@ -4,9 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Jukebox</title>
- <link rel="stylesheet" href="/assets/css/style.css" />
-
-
+  <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
 <body>
   <header class="site-header">
@@ -34,8 +32,27 @@
       </div>
 
       <!-- Tap sync controls will be injected here by jukebox.js -->
-      <div id="lyricsControls" class="lyrics-controls"></div>
-      <div class="tap-status" id="tap-status">Tap registered at <span id="tap-time">0.000s</span> <a id="undo-inline" style="display:none; margin-left:8px; font-size:0.9em; cursor:pointer;">Undo</a></div>
+      *** Begin Patch
+*** Update File: site/index.php
+@@
+-      <!-- Tap sync controls will be injected here by jukebox.js -->
+-      <div id="lyricsControls" class="lyrics-controls"></div>
++      <!-- Tap sync controls will be injected here by jukebox.js -->
++      <div id="lyricsControls" class="lyrics-controls">
++        <!-- Inline Undo and Tap status live inside the controls container -->
++        <button id="undo-last-tap" style="display:none; margin-left:8px;">Undo last tap</button>
++        <div class="tap-status" id="tap-status">
++          Tap registered at <span id="tap-time">0.000s</span>
++          <a id="undo-inline" style="display:none; margin-left:8px; font-size:0.9em; cursor:pointer;">Undo</a>
++        </div>
++      </div>
+@@
+-<script src="/assets/js-final/lyrics-final.js"></script>
+-<script src="/assets/js-final/jukebox.js"></script>
++<!-- Load the exact JS bundle your site is serving -->
++<script src="/assets/js-final/lyrics-final_20260813_142654.js"></script>
++<script src="/assets/js-final/jukebox.js"></script>
+*** End Patch
 
     </section>
   </main>
@@ -44,11 +61,8 @@
     <small>Jukebox demo</small>
   </footer>
 
-<script src="/assets/js-final/lyrics-final.js"></script>
-<script src="/assets/js-final/jukebox.js"></script>
-
-<!-- Undo last tap button -->
-<button id="undo-last-tap" style="display:none; margin-left:8px;">Undo last tap</button>
-
+  <!-- Load the exact JS bundle your site is serving -->
+  <script src="/assets/js-final/lyrics-final_20260813_142654.js"></script>
+  <script src="/assets/js-final/jukebox.js"></script>
 </body>
 </html>
