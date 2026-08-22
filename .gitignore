@@ -29,3 +29,9 @@ backup/
 .cache/
 tmp/
 *.swp
+# Prevent accidental publishing of server files
+/private_backup/
+docs/*.php
+site/*.php
+config.php
+php.ini
