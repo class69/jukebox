@@ -1,0 +1,74 @@
+[
+  {
+    "id": "001",
+    "title": "Disgracefully",
+    "trackNumber": 1,
+    "file": "assets/audio/disgracefully.mp3",
+    "albumCover": "assets/img/disgracefully.jpg",
+    "lyricsFile": "assets/lyrics/disgracefully.lrc",
+    "videoFile": null
+  },
+  {
+    "id": "002",
+    "title": "Everybody's Doing It",
+    "trackNumber": 2,
+    "file": "assets/audio/everybodys-doing-it.mp3",
+    "albumCover": "assets/img/everybodys-doing-it.jpg",
+    "lyricsFile": "assets/lyrics/everybodys-doing-it.lrc",
+    "videoFile": null
+  },
+  {
+    "id": "003",
+    "title": "Funny Prayer",
+    "trackNumber": 3,
+    "file": "assets/audio/funny-prayer.mp3",
+    "albumCover": "assets/img/funny-prayer.jpg",
+    "lyricsFile": "assets/lyrics/funny-prayer.lrc",
+    "videoFile": null
+  },
+  {
+    "id": "004",
+    "title": "Fix Stupid",
+    "trackNumber": 4,
+    "file": "assets/audio/fix-stupid.mp3",
+    "albumCover": "assets/img/fix-stupid.jpg",
+    "lyricsFile": "assets/lyrics/fix-stupid.lrc",
+    "videoFile": null
+  },
+  {
+    "id": "005",
+    "title": "Future Like Yesterday",
+    "trackNumber": 5,
+    "file": "assets/audio/future-like-yesterday.mp3",
+    "albumCover": "assets/img/future-like-yesterday.jpg",
+    "lyricsFile": "assets/lyrics/future-like-yesterday.lrc",
+    "videoFile": null
+  },
+  {
+    "id": "006",
+    "title": "Time",
+    "trackNumber": 6,
+    "file": "assets/audio/time.mp3",
+    "albumCover": "assets/img/time.jpg",
+    "lyricsFile": "assets/lyrics/time.lrc",
+    "videoFile": null
+  },
+  {
+    "id": "007",
+    "title": "Tired",
+    "trackNumber": 7,
+    "file": "assets/audio/tired.mp3",
+    "albumCover": "assets/img/tired.jpg",
+    "lyricsFile": "assets/lyrics/tired.lrc",
+    "videoFile": null
+  },
+  {
+    "id": "008",
+    "title": "Waistline",
+    "trackNumber": 8,
+    "file": "assets/audio/waistline.mp3",
+    "albumCover": "assets/img/waistline.jpg",
+    "lyricsFile": "assets/lyrics/waistline.lrc",
+    "videoFile": null
+  }
+]

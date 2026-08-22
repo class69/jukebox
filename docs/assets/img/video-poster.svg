@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540">
+  <rect width="960" height="540" fill="#0a1118"/>
+  <circle cx="480" cy="270" r="95" fill="none" stroke="#c59b52" stroke-width="10"/>
+  <polygon points="450,210 450,330 550,270" fill="#c59b52"/>
+  <text x="480" y="450" text-anchor="middle" font-family="Georgia" font-size="42" fill="#f7edd9">Delta Blues Video</text>
+</svg>

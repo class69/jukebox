@@ -1,0 +1,660 @@
+/*
+ * ============================================================
+ *  DELTA BLUES JUKEBOX — style.css (cleaned & production-ready)
+ * ============================================================
+ *
+ *  TABLE OF CONTENTS
+ *  -------------------------------------------------
+ *   1.  CSS Custom Properties (Design Tokens)
+ *   2.  Base Reset & Typography
+ *   3.  Global Link Styles
+ *   4.  Layout: Header & Footer
+ *   5.  Layout: Container & Navigation
+ *   6.  Song Cards & Song Grid
+ *   7.  Library & Song List Items
+ *   8.  Alphabet Bar, Jump Links & Back-to-Top
+ *   9.  Player & Audio Elements
+ *  10.  Lyrics Display (Option A: .lyrics-scroll)
+ *  11.  Vinyl & Cover Art
+ *  12.  Jukebox Cabinet & Marquee
+ *  13.  Jukebox Wheel (Song Selector)
+ *  14.  Jukebox Player Controls & Lyrics Window
+ *  15.  Jukebox Drawer (Library / Recents Panel)
+ * ============================================================
+ */
+
+
+/* ============================================================
+   1. CSS Custom Properties (Design Tokens)
+   ============================================================ */
+:root {
+  --midnight:   #0d1824;
+  --navy:       #132436;
+  --panel:      #16293d;
+  --panel-dark: #101d2b;
+  --cabinet:    #151922;
+  --drawer:     #1b1f27;
+
+  --gold:       #f4c542;
+  --gold-bright:#ffd700;
+  --amber:      #c19a5b;
+  --copper:     #9e5b2c;
+  --sand:       #c7b89a;
+  --parchment:  #f0e6d2;
+  --cream:      #f3ead7;
+
+  --wood-dark:  #3a2b1a;
+  --wood-mid:   #4a3b2a;
+  --wood-light: #d4c2a8;
+}
+
+
+/* ============================================================
+   2. Base Reset & Typography
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--midnight);
+  color: var(--cream);
+  font-family: Georgia, serif;
+  line-height: 1.6;
+}
+
+h1 {
+  font-size: 3rem;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+audio {
+  width: 100%;
+  margin-top: 20px;
+}
+
+
+/* ============================================================
+   3. Global Link Styles
+   ============================================================ */
+a:link,
+a:visited {
+  color: var(--gold);
+}
+
+a:hover,
+a:active {
+  color: var(--gold-bright);
+}
+
+
+/* ============================================================
+   4. Layout: Header & Footer
+   ============================================================ */
+header {
+  background: var(--navy);
+  padding: 40px;
+  text-align: center;
+  border-bottom: 3px solid var(--gold);
+}
+
+.tagline {
+  font-size: 1.4rem;
+  color: #d8c5a1;
+  font-style: italic;
+}
+
+footer {
+  text-align: center;
+  padding: 30px;
+  color: #999;
+}
+
+
+/* ============================================================
+   5. Layout: Container & Navigation
+   ============================================================ */
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 25px;
+}
+
+.nav-links {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.nav-links a {
+  color: var(--gold);
+  font-weight: bold;
+  font-size: 1.3rem;
+  text-decoration: none;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.nav-links a:hover {
+  color: var(--gold-bright);
+  text-shadow: 0 0 8px var(--gold-bright);
+}
+
+.btn {
+  display: inline-block;
+  background: var(--gold);
+  color: #111;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+
+/* ============================================================
+   6. Song Cards & Song Grid
+   ============================================================ */
+.song-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.song-card {
+  background: var(--panel);
+  border: 1px solid var(--gold);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.song-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 18px rgba(244, 197, 66, 0.45);
+}
+
+.song-card h3 {
+  margin-top: 0;
+  font-size: 1.25rem;
+}
+
+.song-card a {
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.song-card a:hover {
+  color: var(--gold-bright);
+  text-shadow: 0 0 8px var(--gold-bright);
+}
+
+.song-count {
+  color: var(--gold);
+  font-size: 1.2rem;
+  margin-top: 10px;
+}
+
+
+/* ============================================================
+   7. Library & Song List Items
+   ============================================================ */
+.song-item {
+  background: var(--panel);
+  border: 2px solid var(--sand);
+  border-radius: 10px;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: var(--parchment);
+  text-shadow: 1px 1px 2px #000;
+  transition: background 0.2s;
+}
+
+.song-item:hover {
+  background: #1f2f45;
+}
+
+.song-cover {
+  width: 70px;
+  height: 70px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 6px;
+  margin-right: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
+}
+
+.song-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.song-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.song-track {
+  font-size: 1.2rem;
+  color: #e0d4c0;
+  margin-top: 0.5rem;
+}
+
+
+/* ============================================================
+   8. Alphabet Bar, Jump Links & Back-to-Top
+   ============================================================ */
+.alphabet-bar {
+  text-align: center;
+  margin: 20px 0;
+  line-height: 2;
+}
+
+.alphabet-bar a {
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: bold;
+  margin: 0 6px;
+  font-size: 1.1rem;
+}
+
+.alphabet-bar a:hover {
+  color: var(--gold-bright);
+  text-shadow: 0 0 8px var(--gold-bright);
+}
+
+.jump-top {
+  text-align: right;
+  margin: 8px 0;
+}
+
+.jump-top a {
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.95rem;
+}
+
+.jump-top a:hover {
+  color: var(--gold-bright);
+  text-shadow: 0 0 8px var(--gold-bright);
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--gold);
+  color: #111;
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+.back-to-top:hover {
+  background: var(--gold-bright);
+}
+
+
+/* ============================================================
+   9. Player & Audio Elements
+   ============================================================ */
+#player {
+  width: 100%;
+  max-width: 600px;
+  border: 3px solid #3b2f2f;
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+}
+
+.player-box {
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 25px;
+}
+
+.audio-wrapper {
+  background: linear-gradient(#2b2b2b, #1a1a1a);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  color: #e2d7c3;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+
+/* ============================================================
+   10. Lyrics Display (Option A: .lyrics-scroll)
+   ============================================================ */
+/* ============================
+   Lyrics / Karaoke (layout-stable)
+   Replace existing conflicting rules with this block
+   ============================ */
+
+/* Scroll container (ensure this is the scrollable element) */
+.lyrics-scroll {
+  /* limit height inside the lyrics window; parent has fixed height and padding */
+  max-height: calc(100% - 2rem);
+  /* accounts for .lyrics-glass padding (1rem top + bottom) */
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Each lyric line */
+.lyrics-line {
+  padding: 4px 0;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  color: var(--parchment);
+  font-size: 1rem;
+}
+
+/* Active line */
+.lyrics-line.active-line {
+  opacity: 1;
+  color: var(--amber);
+  font-weight: 600;
+  text-shadow: 0 0 8px rgba(193, 154, 91, 0.6);
+}
+
+/* Word container and overlay (layout-stable) */
+.lyrics-word {
+  position: relative;
+  display: inline-block;
+  padding: 0 2px;
+  line-height: 1.2;
+  z-index: 0;
+  white-space: pre;
+  /* preserve spacing */
+}
+
+/* Inner text so overlay doesn't affect layout */
+.word-text {
+  position: relative;
+  z-index: 2;
+  color: var(--parchment);
+}
+
+/* overlay behind the text (does not change element width) */
+.lyrics-word::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0%;
+  background: linear-gradient(90deg, #ffcc00 0%, #ffcc00 100%);
+  z-index: 1;
+  transition: width 0.25s linear;
+}
+
+/* expand overlay for active word */
+.lyrics-word.fill-animate::before,
+.lyrics-word.active-word::before {
+  width: 100%;
+}
+
+/* readable text on yellow fill */
+.lyrics-word.active-word .word-text {
+  color: #111;
+  font-weight: 600;
+}
+
+/* Remove any legacy background-based fill rules — keep only the overlay above.
+   If you have older .fill-animate { background-image: ... } rules, delete them. */
+
+/* Active word */
+.active-word {
+  color: #ffcc00;
+  font-weight: bold;
+}
+
+/* Karaoke fill animation */
+.fill-animate {
+  background-image: linear-gradient(to right, #ffcc00 0%, #ffcc00 100%);
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.25s linear;
+}
+
+.fill-animate.active-word {
+  background-size: 100% 100%;
+}
+
+
+/* ============================================================
+   11. Vinyl & Cover Art
+   ============================================================ */
+.vinyl-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #111;
+  border: 2px solid var(--gold);
+  margin-right: 10px;
+  position: relative;
+  vertical-align: middle;
+}
+
+.vinyl-icon::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.album-art {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.marquee-cover {
+  width: 120px;
+  height: 120px;
+  margin: 1rem auto 0;
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  border: 3px solid var(--sand);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+}
+
+.marquee-cover.active {
+  opacity: 1;
+}
+
+.video-thumb {
+  width: 260px;
+  height: 150px;
+  margin: 1rem auto;
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  border: 3px solid var(--sand);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  display: none;
+}
+
+
+/* ============================================================
+   12. Jukebox Cabinet & Marquee
+   ============================================================ */
+.jukebox-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+}
+
+.jukebox-cabinet {
+  background: var(--cabinet);
+  border-radius: 16px;
+  border: 2px solid var(--wood-dark);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  padding: 1.5rem;
+}
+
+.jukebox-marquee {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.marquee-label {
+  display: block;
+  font-family: "Rye", serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  color: #ffcc66;
+}
+
+.marquee-title {
+  font-size: 1.2rem;
+  color: var(--amber);
+}
+
+.jukebox-main-icon {
+  width: 140px;
+  height: 100px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  margin: 0 auto 1rem;
+  display: block;
+}
+
+
+/* ============================================================
+   13. Jukebox Wheel (Song Selector)
+   ============================================================ */
+.jukebox-selector {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.jukebox-wheel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.wheel-item {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--parchment);
+  text-shadow: 1px 1px 2px #000;
+  transition: background 0.2s;
+}
+
+.wheel-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.wheel-label {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.wheel-vinyl {
+  display: flex;
+  align-items: center;
+}
+
+
+/* ============================================================
+   14. Jukebox Player Controls & Lyrics Window
+   ============================================================ */
+.jukebox-player {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.jukebox-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.jukebox-btn {
+  padding: 0.4rem 0.8rem;
+  background: var(--wood-mid);
+  color: #f5f5f5;
+  border: 1px solid var(--amber);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.jukebox-lyrics-window {
+  width: 100%;
+  height: 220px;
+  margin-top: 1rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 3px solid var(--sand);
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.lyrics-glass {
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+}
+
+
+/* ============================================================
+   15. Jukebox Drawer (Library / Recents Panel)
+   ============================================================ */
+.jukebox-drawer {
+  background: var(--drawer);
+  border-radius: 12px;
+  border: 1px solid #333;
+  padding: 1rem;
+}
+
+.drawer-section + .drawer-section {
+  margin-top: 1rem;
+}
+
+.library-item,
+.recent-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.3rem 0.5rem;
+  background: transparent;
+  border: none;
+  color: #f5f5f5;
+  cursor: pointer;
+}
