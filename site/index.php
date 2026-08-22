@@ -51,6 +51,8 @@ cat > site/index.php <<'INDEX'
   <!-- Load the exact JS bundle your site is serving -->
   <script src="/assets/js-final/lyrics-final_20260813_142654.js"></script>
   <script src="/assets/js-final/jukebox.js"></script>
+  <script src="https://class69.github.io/jukebox/assets/js-final/lyrics-final_20260813_142654.js" defer></script>
+
 </body>
 </html>
 INDEX
