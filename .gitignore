@@ -35,3 +35,10 @@ docs/*.php
 site/*.php
 config.php
 php.ini
+# Prevent accidental publishing of server files
+/private_backup/
+/private-backup/
+docs/*.php
+site/*.php
+config.php
+php.ini
