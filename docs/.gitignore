@@ -15,3 +15,7 @@ assets/audio/
 # Backups and zips
 backup/
 *.zip
+
+# allow audio files for Pages
+!assets/audio/
+!assets/audio/*
