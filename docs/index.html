@@ -4,85 +4,39 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Jukebox</title>
-  <style>
-    body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;padding:20px}
-    main{max-width:900px;margin:0 auto}
-    .jukebox-lyrics-window{border:1px solid #ddd;padding:10px;margin-top:10px;height:160px;overflow:auto}
-    #trackList{list-style:none;padding:0}
-    #trackList li{padding:6px 8px;border-bottom:1px solid #eee;cursor:pointer}
-  </style>
 </head>
 <body>
   <main>
     <h1>Jukebox</h1>
+    <p>Use the audio control below to play the sample track.</p>
 
-    <section id="nowPlaying">
-      <strong>Now playing:</strong>
-      <span id="nowPlayingTitle">(none)</span>
-    </section>
-
-    <section id="library" style="margin-top:12px">
-      <h2>Track list</h2>
-      <ul id="trackList">
-        <li data-src="assets/audio/disgracefully.mp3">Disgracefully</li>
-      </ul>
-    </section>
-
+    <!-- audio element the page expects -->
     <audio id="jukeboxAudio" controls preload="none"></audio>
-
-    <div class="jukebox-lyrics-window">
-      <div class="lyrics-scroll"></div>
-    </div>
-
-    <div id="lyricsControls"></div>
   </main>
 
-  <!-- Robust repo-relative jukeboxLoadLyrics fallback (no risky regex) -->
+  <!-- Fallback lyrics loader: defines window.jukeboxLoadLyrics only if missing -->
   <script>
   if (typeof window.jukeboxLoadLyrics !== 'function') {
-    window.jukeboxLoadLyrics = async function(path, audioEl, wrapper) {
+    window.jukeboxLoadLyrics = async function(path) {
       try {
-        let url;
-        if (path.startsWith('/')) {
-          const base = location.pathname.replace(/\/$/, '');
-          url = location.origin + (base === '' ? '' : base) + path;
-        } else {
-          url = new URL(path, location.href).href;
-        }
-        const r = await fetch(url);
+        const r = await fetch(path);
         if (!r.ok) throw new Error('fetch failed ' + r.status);
         const txt = await r.text();
-        const lines = txt.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
-        const parsed = [];
-        for (const line of lines) {
-          if (!line.startsWith('[')) continue;
-          const close = line.indexOf(']');
-          if (close === -1) continue;
-          const stamp = line.slice(1, close);
-          const text = line.slice(close + 1).trim();
-          const parts = stamp.split(':');
-          if (parts.length < 2) continue;
-          const min = parseInt(parts[0], 10);
-          const secParts = parts[1].split('.');
-          const sec = parseInt(secParts[0], 10);
-          const frac = secParts[1] ? parseFloat('0.' + secParts[1]) : 0;
-          if (Number.isFinite(min) && Number.isFinite(sec)) parsed.push({ time: min * 60 + sec + frac, text });
-        }
-        try {
-          const scroll = (wrapper && wrapper.querySelector && wrapper.querySelector('.lyrics-scroll')) || document.querySelector('.lyrics-scroll');
-          if (scroll) {
-            scroll.innerHTML = '';
-            parsed.forEach(ln => {
-              const d = document.createElement('div');
-              d.className = 'lyric-line';
-              d.dataset.time = ln.time;
-              d.textContent = ln.text;
-              scroll.appendChild(d);
-            });
+        const raw = txt.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+        const parsed = raw.map(l => {
+          const m = l.match(/^
+
+\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]
+
+(.*)$/);
+          if (m) {
+            const min = parseInt(m[1], 10);
+            const sec = parseInt(m[2], 10);
+            const frac = m[3] ? parseFloat('0.' + m[3]) : 0;
+            return { time: min * 60 + sec + frac, text: m[4].trim() };
           }
-        } catch (e) {
-          console.warn('lyrics render warning', e);
-        }
+          return null;
+        }).filter(Boolean);
         return parsed;
       } catch (e) {
         console.error('jukeboxLoadLyrics fallback error:', e);
@@ -92,6 +46,7 @@
   }
   </script>
 
+  <!-- load the existing jukebox script (leave path as in your repo) -->
   <script src="assets/js-final/jukebox.js"></script>
 </body>
 </html>
