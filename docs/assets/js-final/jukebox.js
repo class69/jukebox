@@ -143,6 +143,38 @@ document.addEventListener('DOMContentLoaded', () => {
   const exportBtn = controlsHost.querySelector('.tap-btn.export') || (function () { const b = document.createElement('button'); b.className = 'tap-btn export'; b.textContent = 'Export .lrc'; controlsHost.appendChild(b); return b; })();
   exportBtn.addEventListener('click', () => { if (typeof downloadLyricsAsLRC === 'function') downloadLyricsAsLRC(); else alert('Export not available'); });
 
+// Auto-scroll lyrics to the active line during playback
+(function enableLyricAutoScroll() {
+  const audio = document.getElementById('jukeboxAudio');
+  const scrollContainer = document.querySelector('.lyrics-scroll');
+  if (!audio || !scrollContainer) return;
+
+  function updateActiveLyric() {
+    const lines = Array.from(scrollContainer.querySelectorAll('.lyric-line'));
+    if (!lines.length) return;
+    const t = audio.currentTime;
+    // find the last line whose data-time <= currentTime
+    let active = null;
+    for (let i = 0; i < lines.length; i++) {
+      const time = parseFloat(lines[i].dataset.time || '0');
+      if (time <= t) active = lines[i];
+      else break;
+    }
+    if (active) {
+      // add a class for styling and scroll smoothly
+      scrollContainer.querySelectorAll('.lyric-line.active').forEach(n => n.classList.remove('active'));
+      active.classList.add('active');
+      // scroll so the active line is centered-ish
+      active.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  // update on timeupdate and when seeking
+  audio.addEventListener('timeupdate', updateActiveLyric);
+  audio.addEventListener('seeked', updateActiveLyric);
+  // initial call in case audio is already at a position
+  setTimeout(updateActiveLyric, 200);
+})();
 
 
 });
