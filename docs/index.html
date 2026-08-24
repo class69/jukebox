@@ -1,60 +1,56 @@
-cat > site/index.php <<'INDEX' <!doctype html>
-    <html lang="en">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jukebox</title>
+  <link rel="icon" href="assets/img/favicon.svg" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>Jukebox</h1>
+  </header>
 
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>Jukebox</title>
-        <link rel="stylesheet" href="/assets/css/style.css" />
-    </head>
+  <main class="site-main">
+    <section class="library">
+      <h2>Library</h2>
+      <ul id="trackList">
+        <li data-src="assets/audio/disgracefully.mp3">Disgracefully</li>
+      </ul>
+    </section>
 
-    <body>
-        <header class="site-header">
-            <h1>Jukebox</h1>
-        </header>
+    <section class="now-playing">
+      <h2>Now Playing</h2>
+      <div id="nowPlayingTitle">—</div>
+      <audio id="jukeboxAudio" controls preload="metadata"></audio>
+    </section>
 
-        <main class="site-main">
-            <section class="library">
-                <h2>Library</h2>
-                <ul id="trackList">
-                    <li data-src="/assets/audio/disgracefully.mp3">Disgracefully</li>
-                </ul>
-            </section>
+    <section class="jukebox-lyrics-window">
+      <h2>Lyrics</h2>
+      <div class="lyrics-glass">
+        <div id="jukeboxLyrics" class="lyrics-scroll" aria-live="polite"></div>
+      </div>
+      <div id="lyricsControls" class="lyrics-controls">
+        <button id="undo-last-tap" style="display:none; margin-left:8px;">Undo last tap</button>
+        <div class="tap-status" id="tap-status">
+          Tap registered at <span id="tap-time">0.000s</span>
+          <a id="undo-inline" style="display:none; margin-left:8px; font-size:0.9em; cursor:pointer;">Undo</a>
+        </div>
+      </div>
+    </section>
+  </main>
 
-            <section class="now-playing">
-                <h2>Now Playing</h2>
-                <div id="nowPlayingTitle">—</div>
-                <audio id="jukeboxAudio" controls preload="metadata"></audio>
-            </section>
+  <footer class="site-footer">
+    <small>Jukebox demo</small>
+  </footer>
 
-            <section class="jukebox-lyrics-window">
-                <h2>Lyrics</h2>
-                <div class="lyrics-glass">
-                    <div id="jukeboxLyrics" class="lyrics-scroll" aria-live="polite"></div>
-                </div>
+  <!-- Relative paths so assets resolve under /jukebox/ on GitHub Pages -->
+  <script src="assets/js-final/lyrics-final_20260813_142654.js" defer></script>
+  <script src="assets/js-final/jukebox.js" defer></script>
 
-                <!-- Tap sync controls will be injected here by jukebox.js -->
-                <div id="lyricsControls" class="lyrics-controls">
-                    <!-- Inline Undo and Tap status live inside the controls container -->
-                    <button id="undo-last-tap" style="display:none; margin-left:8px;">Undo last tap</button>
-                    <div class="tap-status" id="tap-status">
-                        Tap registered at <span id="tap-time">0.000s</span>
-                        <a id="undo-inline"
-                            style="display:none; margin-left:8px; font-size:0.9em; cursor:pointer;">Undo</a>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <footer class="site-footer">
-            <small>Jukebox demo</small>
-        </footer>
-
-        <!-- Load the exact JS bundle your site is serving -->
-        <script src="/assets/js-final/lyrics-final_20260813_142654.js"></script>
-        <script src="/assets/js-final/jukebox.js"></script>
-
-    </body>
-
-    </html>
-    INDEX
+  <noscript>
+    This site requires JavaScript. Please enable JavaScript to use the jukebox.
+  </noscript>
+</body>
+</html>
